@@ -1,0 +1,339 @@
+\documentclass[a4paper, 12pt]{article}
+\usepackage{graphicx}
+\usepackage[UTF8]{ctex}
+\usepackage{listings}
+\usepackage{float}
+\usepackage{hyperref}
+\usepackage{color}
+
+\title{实验报告1\\Git与\LaTeX}
+\author{洪子翔}
+\date{\today}
+
+\lstset{
+    basicstyle          =   \sffamily,
+    keywordstyle        =   \bfseries,
+    commentstyle        =   \rmfamily\itshape,
+    stringstyle         =   \ttfamily,
+    flexiblecolumns,
+    numbers             =   left,
+    showspaces          =   false,
+    numberstyle         =   \zihao{-5}\ttfamily,
+    showstringspaces    =   false,
+    captionpos          =   t,
+    frame               =   lrtb,   
+}
+
+\setlength{\parindent}{0pt}
+
+\begin{document}
+
+\maketitle
+\newpage
+\tableofcontents
+\newpage
+
+\section{实验内容}
+
+    项目链接：\href{https://github.com/SoraRosa0514/system-dev-tools/tree/main/1}{https://github.com/SoraRosa0514/system-dev-tools/tree/main/1}
+	\subsection{Git}
+    这一部分内容使用样例项目"alice"完成。\\
+    链接：\href{https://github.com/SoraRosa0514/alice}{https://github.com/SoraRosa0514/alice}
+    	\subsubsection{初始配置}
+            可以使用\verb|git config|实现Git的各种配置。配置变量按优先级从低到高分为三级：
+            \begin{enumerate}
+                \item Git路径下的/etc/gitconfig：对该系统全体用户生效。
+                \item  用户路径下的~/.gitconfig：对该用户生效。
+                \item 仓库中的.git/config：对该仓库生效。
+            \end{enumerate}
+            排在后面的config会覆盖前者。\\
+            初次使用Git需要初始化用户信息，包括用户名和邮箱地址，代码如下：\\
+            \verb|git config user.name "Alice"|\\
+            \verb|git config user.email AliceRiddel@example.com|\\
+            如果希望一劳永逸，可以在\verb|config|后加上\verb|--global|，此处的配置将作用于整个系统。
+            要查看配置结果，只需要把配置的命令去掉末尾的值即可，例如：\\
+            \verb|$ git config user.name|\\
+            \verb|Alice|\\
+            要查看所有配置内容，输入\verb|$ git config --list|
+            
+		\subsubsection{开始}
+            可以新建仓库或克隆已有仓库。
+            \begin{enumerate}
+                \item 新建仓库\\
+                    首先移动到对应目录，再使用\verb|git init|\\
+                    成功后，应该可以在对应目录找到.git文件夹。                        
+                    \begin{figure}[h]
+                        \centering
+                        \includegraphics[width=1\linewidth]{01.png}
+                        \label{img01}
+                    \end{figure}
+                \item 克隆仓库 \\
+                    使用\verb|git clone <repo> <directory>|\\
+                    其中repo是项目地址，可以使用ssh,git,https等多种协议；directory是要保存到的本地地址。\\
+                    以missing semester项目为例：\\
+                        https:\\\verb|git clone https://github.com/missing-semester-cn/missing-semester-cn.github.io.git|\\
+                        git:\\\verb|git clone git://...|\\
+                        ssh:\\\verb|git clone git@github.com:...|
+                \end{enumerate}
+                
+        \subsubsection{提交到github}
+            首先在github初始化新仓库，之后直接按照提示输入命令即可。
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.8\linewidth]{02.png}
+                \label{img02}
+            \end{figure}
+            结果如图所示：
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.8\linewidth]{03.png}
+                \label{img03}
+            \end{figure}
+            
+        \subsubsection{跟踪状态}
+            可以用\verb|git status|查看仓库状态。如果在Wonderland目录下创建文件"Potion.txt"，再运行这个命令，会看到如下内容：\\
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=1\linewidth]{05.png}
+                \label{img05}
+            \end{figure}
+            从这里我们能看出：首先我们在main分支，并且没有偏差。此外，git发现了目录下未被跟踪的"Potion.txt”。如果要提交文件，必须跟踪它。\\
+            暂时不要管它。如果觉得提示太复杂，用\verb|git status -s|即可打开简略模式,效果如下\\
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=1\linewidth]{06.png}
+                \label{img06}
+            \end{figure}
+            前面的??代表未跟踪。已跟踪的文件的提示之后会讲解。
+
+        \subsubsection{提交更改}
+            输入\verb|git add <filename>|就可以跟踪未跟踪的文件。\\
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=0.8\linewidth]{07.png}
+                \label{img07}
+            \end{figure}
+            如图所示，这个命令成功让git追踪文件，并将修改放入暂存区，简略模式下由绿A标记表示新增的文件。\\
+            需要注意：如果之后再对文件进行修改，需要再次暂存更改。例如在Potion.txt写下“喝下就会变大的药”,此时再检查状态：\\
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=1\linewidth]{08.png}
+                \label{img08}
+            \end{figure}
+            提示更改未暂存，用第二列的红M表示。再次用\verb|git add <filename>|即可。\\
+            之后输入\verb|git commit -m "Test commit"|提交修改，并留下“Test commit”的留言方便阅读。\\
+            为了在github上看到修改，还需要使用\verb|git push origin main|推送上去。\\
+
+        \subsubsection{跳过暂存提交}
+            如果修改了许多文件，且它们都被追踪，直接输入\\
+            \verb|git commit -a|\\
+            可以跳过暂存步骤。
+
+        \subsubsection{删除文件}
+            直接在工作目录删除文件是不可行的。假如本地删除Potion.txt再跟踪状态：\\
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=1\linewidth]{09.png}
+                \label{img09}
+            \end{figure}
+            与增加文件一样，必须将修改放到暂存区。这里需要使用\verb|git rm <filename>|才行，之后提交修改。\\
+
+        \subsubsection{移动或重命名文件}
+            只需使用\verb|git mv <file> <newfile>|\\
+            例如将目录下的rabbit.txt变成cat.txt：\\
+            \begin{figure}[H]
+                \centering
+                \includegraphics[width=1\linewidth]{010.png}
+                \label{img010}
+            \end{figure}
+
+        \subsubsection{查看日志}
+        输入\verb|git log|即可查看历史更改。\\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=1\linewidth]{011.png}
+            \label{img011}
+        \end{figure}
+        通过日志我们能看到每次提交的作者，时间和说明等，时间更近的提交在前。\\
+        要想让日志更好读，尝试\verb| git log --all --graph --decorate|\\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=1\linewidth]{012.png}
+            \label{img012}
+        \end{figure}
+        这种模式会用彩色的线标注不同提交的分支关系。不过这个仓库没有。\\
+
+        \subsubsection{查找特定提交信息}
+        通过在\verb|git log|加上参数，可以方便地查找一些东西。\\
+        比如说，我们尝试查看cat.txt的最后一次修改：\\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=1\linewidth]{013.png}
+            \label{img013}
+        \end{figure}
+        此处使用\verb|git log -1 cat.txt|，其中"-x"代表“倒数第x次更改”。\\
+
+    
+	\subsection{\LaTeX}
+ 
+		\subsubsection{基本文档结构}
+		一个最简单的文档可以这样实现：
+		\begin{lstlisting}[language=TeX] 
+			\documentclass{article}
+			\begin{document}
+				Test test.
+			\end{document}
+		\end{lstlisting}
+        实现的效果如图\ref{img1}。\\
+        \begin{figure}[H]
+            \centering
+            \includegraphics[width=0.25\linewidth]{1.png}
+            \label{img1}
+        \end{figure}
+        其中，第一行确定了文件的格式，除了article之外，还包括report，book等，也可以制定纸张类型、字体大小等参数。
+        第二行和第四行分别是文件环境的开头和结尾，二者之间的内容是文档的主体。begin之前的内容是预处理命令，可以引入宏包，设置参数等；end之后的部分则会被忽略。
+        
+        \subsubsection{标题与目录}
+            首先是标题，包括大标题，作者名和日期。
+            \begin{lstlisting}[language=TeX] 
+            ...
+            \title{Doc 1}
+            \author{Alice}
+            \date{\today}
+            ...
+            \begin{document}
+            \maketitle
+            \end{document}
+		  \end{lstlisting}
+            实现的效果如图\ref{img2}。\\
+            \begin{figure}[H]
+                \centering
+                 \includegraphics[width=0.4\linewidth]{2.png}
+                \label{img2}
+             \end{figure}
+                插入标题时，title date和author指令设置标题参数，大括号内是对应的内容。设置完之后，使用maketitile指令插入标题。\\
+                添加目录可以使用\verb|\tableofcontents|，可能需要多次编译。\\
+
+
+        \subsubsection{文章层次}
+            对article格式而言，有section,subsection和subsubsection三种层次，代码为\\
+                \verb|\section{}|\\
+                \verb|\subsection{}|\\
+                \verb|\subsubsection{}|\\
+                效果如图：\\
+                \begin{figure}[H]
+                    \centering
+                    \includegraphics[width=0.5\linewidth]{3.png}
+                \end{figure}
+
+            
+        \subsubsection{彩色字体}
+            彩色字体的适配需要color宏包。\\
+            让字体变色的代码是\verb|{\color{colorname}text}|\\
+            改变背景色的则是\verb|\colorbox{colorname}{text}|\\
+            以蓝底白色的字water为例，代码为：\\
+            \verb|\colorbox{blue}{\color{white}{water}}|\\
+            \colorbox{blue}{\color{white}{water}}\\
+
+        \subsubsection{特殊字符}
+            \# \$ \% \^{} \& \_ \{ \} \~{} \textbackslash \\
+            上述文字是特殊字符，需要转义或特殊指令才能显示：\\
+            \verb|\# \$ \% \^{} \& \_ \{ \} \~{} \textbackslash|
+
+        \subsubsection{列表}
+            分有序和无序两种。有序列表的代码为：\\
+            \begin{lstlisting}[language=TeX] 
+                \begin{enumerate}
+                    \item A
+                    \item B
+                \end{enumerate}
+		  \end{lstlisting}
+            实现效果：\\
+                \begin{enumerate}
+                    \item A
+                    \item B
+                \end{enumerate}
+            无序列表：\\
+            \begin{lstlisting}[language=TeX] 
+                \begin{itemize}
+                    \item A
+                    \item B
+                \end{itemize}
+		  \end{lstlisting}
+            实现：
+                \begin{itemize}
+                    \item A
+                    \item B
+                \end{itemize}
+
+        \subsubsection{表格}
+        以一段代码举例：\\
+        \begin{lstlisting}[language=TeX] 
+            \begin{tabular}{|l|l|}
+            Apples       & Green  \\
+            \hline
+            Strawberries & Red    \\
+            \cline{2-2}
+            Orange      & Orange \\
+            \end{tabular}
+		\end{lstlisting}
+        \begin{tabular}{|l|l|}
+            Apples       & Green  \\
+            \hline
+            Strawberries & Red    \\
+            \cline{2-2}
+            Orange      & Orange \\
+        \end{tabular}
+        \\
+        第一行第二个大括号的内容是表格结构，由l,r,c和|组成。前三项每个字母对应一列，分别是左对齐、中对齐和右对齐。|是竖边框。
+        中间的内容，用\&分隔每一列，双反斜线换行，\verb|\hline|代表完整横边框，\verb|\cline{x-y}|代表从x列到y列的横边框。
+
+        \subsubsection{图表}
+            要插入图表（图片）需要引入graphicx宏包，以随便的一张图为例：
+            \begin{figure}[h]
+                \centering
+                \includegraphics[width=0.5\linewidth]{4.png}
+                \caption{我是样例}
+                \label{img4}
+            \end{figure}
+            
+            \begin{lstlisting}[language=TeX] 
+                \begin{figure}[h]
+                    \centering
+                    \includegraphics[width=0.5\linewidth]{4.png}
+                    \caption{我是样例}
+                    \label{img4}
+                \end{figure}
+		  \end{lstlisting}
+            图表同样是一种环境，中间各行分别代表居中、[行宽0.5倍]{文件名4.png}，标题和标签。\\
+            begin后的方括号内标记了图表的放置位置，可以是h（适应）,t（页首）,b（页尾）等，加!代表强制。\\
+            更精确的控制需要float宏包的支持。\\
+            
+        \subsubsection{插入代码}
+        行内代码可以用\verb|\verb|||实现，例如：\\
+        \verb|print("Hello tex!)|\\
+        长段代码需要引入listings宏包，基本格式是：
+            \begin{lstlisting}[language=TeX] 
+                \begin{lstlisting}[language=C++]
+                    cout << "Hello World!";
+                \textbackslash end{lstlisting}
+		  \end{lstlisting}
+            begin后的方括号内表明代码语言，中间输入即可。\\
+
+        \subsubsection{公式}
+            行间公式可以使用\verb|\[...\]|，比如\[1+2=3\]\\
+            \verb|\[1+2=3\]|
+            长公式可以用equation环境。同样以1+2=3为例。\\
+            \begin{equation}
+                1+2=3
+            \end{equation}
+            要输入上下标，上标用\^{}\{...\}，下标用\_\{...\}\\
+            比如\[a^{up}_{down}\]
+            要输入分数，用\textbackslash frac\{分子\}\{分母\}\\
+            比如\[\frac{2}{5}\]
+            希腊字母的输入使用\textbackslash 接希腊字母英文名称的格式，大小写由名称首字母大小写决定。\\
+            更复杂的输入最好使用amsmath宏包。\\
+
+    \section{心得}
+        这节课的学习让我学到了两种非常重要的工具：便利的远程版本控制工具Git及平台GitHub，以及适合学术写作的排版系统\LaTeX。虽然相比之下这两种工具较难使用，但更加专业且便捷。可以预料到，以后我将经常和它们打交道。
+\end{document}
